@@ -1,0 +1,4 @@
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=adminpassword123
+JWT_SECRET=super_secret_jwt_key_please_change_in_production_min32chars
+# MCP_API_TOKEN=custom_mcp_api_token_optional

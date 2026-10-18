@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Production & Build outputs
+dist/
+tsconfig.tsbuildinfo
+.wrangler/
+
+# Environment & Secrets
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+*.local
+
+# System & Editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Milestones / Scratch
+Milestone1.md
+Milestone2.md

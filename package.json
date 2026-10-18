@@ -1,0 +1,41 @@
+{
+  "name": "itab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"Vite,Wrangler\" -c \"cyan.bold,magenta.bold\" \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "wrangler dev --port 8787",
+    "build": "vue-tsc -b && vite build",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "db:init:local": "wrangler d1 execute DB --local --file=./schema.sql",
+    "db:init:remote": "wrangler d1 execute DB --remote --file=./schema.sql -y",
+    "db:seed:local": "wrangler d1 execute DB --local --file=./seed.sql -y",
+    "db:seed:remote": "wrangler d1 execute DB --remote --file=./seed.sql -y",
+    "db:migrate:local": "wrangler d1 execute DB --local --file=./migrations/0002_add_ai_agent_mcp.sql",
+    "db:migrate:remote": "wrangler d1 execute DB --remote --file=./migrations/0002_add_ai_agent_mcp.sql -y"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.16.0",
+    "@vueuse/core": "^12.8.2",
+    "hono": "^4.7.4",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-draggable-plus": "^0.6.0",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261018.1",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "concurrently": "^9.1.2",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0",
+    "vue-tsc": "^2.2.8",
+    "wrangler": "^4.151.1"
+  }
+}

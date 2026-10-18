@@ -1,0 +1,21 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "itab",
+	"main": "src/server/index.ts",
+	"compatibility_date": "2025-02-14",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "itab-db",
+			"database_id": "03e4daa5-0447-4d2e-afe8-d9e31bb21a5f"
+		}
+	]
+}
