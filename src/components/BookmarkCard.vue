@@ -9,7 +9,6 @@ import {
   Copy,
   Check,
   Pencil,
-  Trash2,
   GripVertical,
   Sparkles,
   X,
@@ -248,12 +247,6 @@ const handleEdit = (e: Event) => {
   e.stopPropagation()
   emit('edit', bookmark)
 }
-
-const handleDelete = (e: Event) => {
-  e.preventDefault()
-  e.stopPropagation()
-  emit('delete', bookmark)
-}
 </script>
 
 <template>
@@ -402,15 +395,6 @@ const handleDelete = (e: Event) => {
           @click="handleEdit"
         >
           <Pencil class="w-3.5 h-3.5" />
-        </button>
-
-        <button
-          type="button"
-          title="删除书签"
-          class="p-1 rounded-md text-zinc-500 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-          @click="handleDelete"
-        >
-          <Trash2 class="w-3.5 h-3.5" />
         </button>
 
         <!-- Drag Handle -->

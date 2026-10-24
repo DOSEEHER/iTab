@@ -11,6 +11,7 @@ import {
   Tag,
   FileText,
   Image as ImageIcon,
+  Trash2,
 } from '@lucide/vue'
 
 const {
@@ -38,6 +39,7 @@ const emit = defineEmits<{
       ai_prompt: string
     }
   ): void
+  (e: 'delete', bookmark: Bookmark): void
 }>()
 
 const urlInput = useTemplateRef<HTMLInputElement>('url-input')
@@ -147,6 +149,12 @@ const handleSubmit = () => {
     custom_icon_url: customIconUrl.value.trim(),
     ai_prompt: aiPrompt.value.trim(),
   })
+}
+
+const handleDelete = () => {
+  if (bookmarkToEdit) {
+    emit('delete', bookmarkToEdit)
+  }
 }
 </script>
 
@@ -312,20 +320,33 @@ const handleSubmit = () => {
         </div>
 
         <!-- Footer Buttons -->
-        <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button
-            type="button"
-            class="px-4 py-2 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            @click="emit('close')"
-          >
-            取消
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 rounded-xl text-xs font-medium text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] transition-all shadow-xs"
-          >
-            {{ isEditing ? '保存修改' : '确认添加' }}
-          </button>
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div>
+            <button
+              v-if="isEditing"
+              type="button"
+              class="px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors flex items-center gap-1.5"
+              @click="handleDelete"
+            >
+              <Trash2 class="w-3.5 h-3.5" />
+              <span>删除书签</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button
+              type="button"
+              class="px-4 py-2 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              @click="emit('close')"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 rounded-xl text-xs font-medium text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] transition-all shadow-xs"
+            >
+              {{ isEditing ? '保存修改' : '确认添加' }}
+            </button>
+          </div>
         </div>
       </form>
     </div>

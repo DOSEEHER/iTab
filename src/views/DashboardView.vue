@@ -249,6 +249,10 @@ const handleDeleteBookmark = async (bm: Bookmark) => {
   if (!confirm(`确定要删除书签【${bm.title}】吗？`)) return
   try {
     await bookmarkStore.deleteBookmark(bm.id)
+    if (isBookmarkModalOpen.value) {
+      isBookmarkModalOpen.value = false
+      bookmarkToEdit.value = null
+    }
   } catch (err) {
     alert(err instanceof Error ? err.message : '删除书签失败')
   }
@@ -840,6 +844,7 @@ const handleCategoryClick = (catId: number | null) => {
       :bookmark-to-edit="bookmarkToEdit"
       @close="isBookmarkModalOpen = false"
       @save="handleSaveBookmark"
+      @delete="handleDeleteBookmark"
     />
 
     <CategoryModal
