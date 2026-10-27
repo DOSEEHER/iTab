@@ -294,7 +294,7 @@ const handleDelete = () => {
           <input
             v-model="customIconUrl"
             type="text"
-            placeholder="留空则自动从网站或 DuckDuckGo 图标库获取"
+            placeholder="留空则自动从网站或 Google 图标库获取"
             class="w-full px-3 py-2 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono"
           />
         </div>

@@ -39,10 +39,20 @@ const currentSrc = computed(() => {
     return customIconUrl
   }
   if (currentTier.value <= 2 && hostname.value) {
-    return `https://icons.duckduckgo.com/ip3/${hostname.value}.ico`
+    return `https://www.google.com/s2/favicons?domain=${hostname.value}&sz=64`
   }
   return ''
 })
+
+const handleImageLoad = (event: Event) => {
+  if (currentTier.value === 2) {
+    const img = event.target as HTMLImageElement
+    // Google returns a 16x16 generic globe icon when the favicon is not found for sz=64
+    if (img.naturalWidth <= 16 && img.naturalHeight <= 16) {
+      currentTier.value = 3
+    }
+  }
+}
 
 const handleImageError = () => {
   if (currentTier.value === 1) {
@@ -100,6 +110,7 @@ const avatarStyleClass = computed(() => {
       :alt="title"
       loading="lazy"
       class="w-6 h-6 object-contain rounded-md"
+      @load="handleImageLoad"
       @error="handleImageError"
     />
 
