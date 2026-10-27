@@ -254,6 +254,7 @@ const handleEdit = (e: Event) => {
     :href="bookmark.url"
     target="_blank"
     rel="noopener noreferrer"
+    draggable="false"
     class="group relative flex items-start gap-3 p-3 rounded-2xl bg-white/70 dark:bg-zinc-900/60 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 cursor-pointer h-24 overflow-hidden"
     :data-id="bookmark.id"
   >
@@ -373,7 +374,7 @@ const handleEdit = (e: Event) => {
 
     <!-- Actions (Desktop Hover & Mobile) -->
     <div
-      class="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xs p-0.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs"
+      class="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity duration-150 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xs p-0.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs"
     >
       <!-- Copy Link Button (Visible in both admin & read-only) -->
       <button

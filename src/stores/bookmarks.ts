@@ -26,9 +26,9 @@ export const useBookmarkStore = defineStore('bookmarks', () => {
         list.push(bm)
       }
     }
-    // Sort each group
+    // Sort each group deterministically by sort_order, then id
     for (const [, list] of map) {
-      list.sort((a, b) => a.sort_order - b.sort_order)
+      list.sort((a, b) => (a.sort_order - b.sort_order) || (a.id - b.id))
     }
     return map
   })
@@ -280,6 +280,8 @@ export const useBookmarkStore = defineStore('bookmarks', () => {
   const reorderBookmarks = async (
     items: Array<{ id: number; category_id: number; sort_order: number }>
   ) => {
+    if (!items || items.length === 0) return
+
     // Optimistically update local array
     for (const item of items) {
       const bm = bookmarks.value.find((b) => b.id === item.id)
@@ -289,8 +291,9 @@ export const useBookmarkStore = defineStore('bookmarks', () => {
       }
     }
 
+
     try {
-      await fetch('/api/bookmarks/reorder', {
+      const res = await fetch('/api/bookmarks/reorder', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -298,9 +301,33 @@ export const useBookmarkStore = defineStore('bookmarks', () => {
         },
         body: JSON.stringify({ items }),
       })
+      if (res.status === 401) {
+        authStore.logout()
+        return
+      }
+      if (!res.ok) {
+        console.error('[Apple] reorderBookmarks failed with status:', res.status)
+      }
     } catch (err) {
       console.error('[Apple] reorderBookmarks error:', err)
     }
+  }
+
+  const reorderCategoryBookmarks = async (
+    categoryId: number,
+    newBookmarks: Bookmark[]
+  ) => {
+    const items = newBookmarks.map((bm, index) => {
+      bm.category_id = categoryId
+      bm.sort_order = index
+      return {
+        id: bm.id,
+        category_id: categoryId,
+        sort_order: index,
+      }
+    })
+
+    await reorderBookmarks(items)
   }
 
   // 5. Metadata Fetcher
@@ -373,6 +400,7 @@ export const useBookmarkStore = defineStore('bookmarks', () => {
     updateBookmark,
     deleteBookmark,
     reorderBookmarks,
+    reorderCategoryBookmarks,
     scrapeMetadata,
     exportBackup,
     importBackup,

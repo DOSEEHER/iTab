@@ -406,6 +406,32 @@ app.post('/api/categories', async (c) => {
   }
 })
 
+// Reorder categories in single round-trip batch (must precede /:id)
+app.put('/api/categories/reorder', async (c) => {
+  try {
+    const body = await c.req.json<{ items: Array<{ id: number; sort_order: number }> }>()
+    if (!body.items || !Array.isArray(body.items)) {
+      return c.json({ error: 'Invalid reorder items' }, 400)
+    }
+
+    const statements = body.items.map((item) =>
+      c.env.DB.prepare('UPDATE categories SET sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(
+        item.sort_order,
+        item.id
+      )
+    )
+
+    if (statements.length > 0) {
+      await c.env.DB.batch(statements)
+    }
+
+    return c.json({ success: true })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return c.json({ error: '更新分类排序失败', details: message }, 500)
+  }
+})
+
 app.put('/api/categories/:id', async (c) => {
   const id = Number(c.req.param('id'))
   if (!id) return c.json({ error: 'Invalid ID' }, 400)
@@ -508,32 +534,6 @@ app.put('/api/categories/:id/share', async (c) => {
   }
 })
 
-// Reorder categories in single round-trip batch
-app.put('/api/categories/reorder', async (c) => {
-  try {
-    const body = await c.req.json<{ items: Array<{ id: number; sort_order: number }> }>()
-    if (!body.items || !Array.isArray(body.items)) {
-      return c.json({ error: 'Invalid reorder items' }, 400)
-    }
-
-    const statements = body.items.map((item) =>
-      c.env.DB.prepare('UPDATE categories SET sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(
-        item.sort_order,
-        item.id
-      )
-    )
-
-    if (statements.length > 0) {
-      await c.env.DB.batch(statements)
-    }
-
-    return c.json({ success: true })
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return c.json({ error: '更新分类排序失败', details: message }, 500)
-  }
-})
-
 // ==========================================
 // 6. Bookmark Management Endpoints
 // ==========================================
@@ -580,6 +580,34 @@ app.post('/api/bookmarks', async (c) => {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return c.json({ error: '创建书签失败', details: message }, 500)
+  }
+})
+
+// Reorder bookmarks across or within categories in single batch (must precede /:id)
+app.put('/api/bookmarks/reorder', async (c) => {
+  try {
+    const body = await c.req.json<{
+      items: Array<{ id: number; category_id: number; sort_order: number }>
+    }>()
+
+    if (!body.items || !Array.isArray(body.items)) {
+      return c.json({ error: 'Invalid reorder items' }, 400)
+    }
+
+    const statements = body.items.map((item) =>
+      c.env.DB.prepare(
+        'UPDATE bookmarks SET category_id = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+      ).bind(item.category_id, item.sort_order, item.id)
+    )
+
+    if (statements.length > 0) {
+      await c.env.DB.batch(statements)
+    }
+
+    return c.json({ success: true })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return c.json({ error: '更新书签排序失败', details: message }, 500)
   }
 })
 
@@ -646,34 +674,6 @@ app.delete('/api/bookmarks/:id', async (c) => {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return c.json({ error: '删除书签失败', details: message }, 500)
-  }
-})
-
-// Reorder bookmarks across or within categories in single batch
-app.put('/api/bookmarks/reorder', async (c) => {
-  try {
-    const body = await c.req.json<{
-      items: Array<{ id: number; category_id: number; sort_order: number }>
-    }>()
-
-    if (!body.items || !Array.isArray(body.items)) {
-      return c.json({ error: 'Invalid reorder items' }, 400)
-    }
-
-    const statements = body.items.map((item) =>
-      c.env.DB.prepare(
-        'UPDATE bookmarks SET category_id = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-      ).bind(item.category_id, item.sort_order, item.id)
-    )
-
-    if (statements.length > 0) {
-      await c.env.DB.batch(statements)
-    }
-
-    return c.json({ success: true })
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return c.json({ error: '更新书签排序失败', details: message }, 500)
   }
 })
 

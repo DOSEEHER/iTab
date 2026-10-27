@@ -259,16 +259,8 @@ const handleDeleteBookmark = async (bm: Bookmark) => {
 }
 
 // Drag & Drop reorder handlers
-const handleBookmarkDrop = (targetCategoryId: number) => {
-  const targetCategoryBookmarks = bookmarkStore.bookmarksByCategory.get(targetCategoryId) || []
-  const items = targetCategoryBookmarks.map((bm, index) => ({
-    id: bm.id,
-    category_id: targetCategoryId,
-    sort_order: index,
-  }))
-  if (items.length > 0) {
-    bookmarkStore.reorderBookmarks(items)
-  }
+const handleBookmarkChange = (categoryId: number, currentBookmarks: Bookmark[]) => {
+  bookmarkStore.reorderCategoryBookmarks(categoryId, currentBookmarks)
 }
 
 const handleCategoryClick = (catId: number | null) => {
@@ -801,10 +793,13 @@ const handleCategoryClick = (catId: number | null) => {
               group="bookmarks"
               :animation="150"
               handle=".drag-handle"
+              :disabled="Boolean(bookmarkStore.searchQuery.trim())"
               :delay="220"
               :delay-on-touch-only="true"
               class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 responsive-bookmark-grid gap-3.5 min-h-[50px] p-1 rounded-2xl"
-              @end="handleBookmarkDrop(section.category.id)"
+              @update="() => handleBookmarkChange(section.category.id, section.bookmarks)"
+              @add="() => handleBookmarkChange(section.category.id, section.bookmarks)"
+              @remove="() => handleBookmarkChange(section.category.id, section.bookmarks)"
             >
               <BookmarkCard
                 v-for="bm in section.bookmarks"
